@@ -29,6 +29,9 @@ Standard library changes
   * Channels now convert inserted values (like containers) instead of requiring types to match ([#29092]).
   * `range` can accept the stop value as a positional argument, e.g. `range(1,10,step=2)` ([#28708]).
   * `edit` can now be called on a module to edit the file that defines it ([#29636]).
+  * All compiler-reflection tools (i.e. the `code_` class of functions and macros) now print accurate
+    line number and inlining information in a common style, and take an optional parameter (debuginfo=:default)
+    to control the verbosity of the metadata shown ([#TBD]).
 
 Compiler/Runtime improvements
 -----------------------------
