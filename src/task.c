@@ -220,6 +220,12 @@ JL_DLLEXPORT void *jl_task_stack_buffer(jl_task_t *task, size_t *size, int *tid)
     return (void *)((char *)task->stkbuf + off);
 }
 
+static void record_backtrace(jl_ptls_t ptls) JL_NOTSAFEPOINT
+{
+    // storing bt_size in ptls ensures roots in bt_data will be found
+    ptls->bt_size = rec_backtrace(ptls->bt_data, JL_MAX_BT_SIZE);
+}
+
 JL_DLLEXPORT void julia_init(JL_IMAGE_SEARCH rel)
 {
     _julia_init(rel);
@@ -426,8 +432,7 @@ JL_DLLEXPORT void jl_throw(jl_value_t *e JL_MAYBE_UNROOTED)
     assert(e != NULL);
     if (ptls->safe_restore)
         throw_internal(NULL);
-    // storing bt_size in ptls ensures roots in bt_data will be found
-    ptls->bt_size = rec_backtrace(ptls->bt_data, JL_MAX_BT_SIZE);
+    record_backtrace(ptls);
     throw_internal(e);
 }
 
@@ -617,7 +622,7 @@ void NOINLINE JL_NORETURN start_task(void)
     jl_value_t *res;
     t->started = 1;
     if (t->exception != jl_nothing) {
-        ptls->bt_size = rec_backtrace(ptls->bt_data, JL_MAX_BT_SIZE);
+        record_backtrace(ptls);
         jl_push_excstack(&t->excstack, t->exception,
                          ptls->bt_data, ptls->bt_size);
         res = t->exception;
