@@ -518,7 +518,7 @@ isready(c::Channel) = n_avail(c) > 0
 
 if JULIA_PARTR
 n_avail(c::Channel) = lock(c.lock) do
-    isbuffered(c) ? length(c.data) : length(c.putters)
+    isbuffered(c) ? length(c.data) : isempty(c.cond_put) ? 0 : 1
 end
 else # !JULIA_PARTR
 n_avail(c::Channel) = isbuffered(c) ? length(c.data) : length(c.putters)
