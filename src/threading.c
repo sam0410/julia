@@ -278,6 +278,7 @@ void jl_init_threadtls(int16_t tid)
     memset(bt_data, 0, sizeof(uintptr_t) * (JL_MAX_BT_SIZE + 1));
     ptls->bt_data = (uintptr_t*)bt_data;
     ptls->sig_exception = NULL;
+    ptls->previous_exception = NULL;
 #ifdef _OS_WINDOWS_
     ptls->needs_resetstkoflw = 0;
 #endif
