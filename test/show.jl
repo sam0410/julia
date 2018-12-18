@@ -995,8 +995,13 @@ end
     d = Dict(Pair{Integer,Integer}(1,2)=>Pair{Integer,Integer}(1,2))
     @test showstr(d) == "Dict((1=>2)=>(1=>2))" # correct parenthesis
     
+    # issue #29536
     d = Dict((+)=>1)
-    @test showstr(d) == "Dict((+)=>1)" # (#29536)
+    @test showstr(d) == "Dict((+)=>1)"
+
+    d = Dict("+"=>1)
+    @test showstr(d) == "Dict(\"+\"=>1)"
+
 end
 
 @testset "alignment for pairs" begin  # (#22899)
